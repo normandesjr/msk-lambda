@@ -1,0 +1,83 @@
+resource "aws_vpc" "vpc" {
+  cidr_block = "192.168.0.0/16"
+
+  tags = {
+    Name = "iti-zup"
+  }
+}
+
+data "aws_availability_zones" "azs" {
+  state = "available"
+}
+
+resource "aws_subnet" "private-1" {
+  availability_zone = data.aws_availability_zones.azs.names[0]
+  cidr_block        = "192.168.1.0/24"
+  vpc_id            = aws_vpc.vpc.id
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name = "iti-zup-private-1"
+  }
+}
+
+resource "aws_subnet" "private-2" {
+  availability_zone = data.aws_availability_zones.azs.names[1]
+  cidr_block        = "192.168.2.0/24"
+  vpc_id            = aws_vpc.vpc.id
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name = "iti-zup-private-2"
+  }
+}
+
+resource "aws_subnet" "public-1" {
+  availability_zone = data.aws_availability_zones.azs.names[0]
+  cidr_block        = "192.168.10.0/24"
+  vpc_id            = aws_vpc.vpc.id
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "iti-zup-public-1"
+  }
+}
+
+resource "aws_subnet" "public-2" {
+  availability_zone = data.aws_availability_zones.azs.names[1]
+  cidr_block        = "192.168.20.0/24"
+  vpc_id            = aws_vpc.vpc.id
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "iti-zup-public-2"
+  }
+}
+
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.vpc.id
+
+  tags = {
+    Name = "iti-zup-igw"
+  }
+}
+
+resource "aws_route_table" "public_route" {
+  vpc_id = aws_vpc.vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+}
+
+resource "aws_route_table_association" "public-1" {
+  route_table_id = aws_route_table.public_route.id
+  subnet_id = aws_subnet.public-1.id
+}
+
+resource "aws_route_table_association" "public-2" {
+  route_table_id = aws_route_table.public_route.id
+  subnet_id = aws_subnet.public-2.id
+}
+
