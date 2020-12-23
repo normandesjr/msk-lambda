@@ -3,3 +3,4 @@
 terraform.tfstate
 .terraform/
 terraform.tfstate.backup
+terraform/lambda/msk-consumer.zip

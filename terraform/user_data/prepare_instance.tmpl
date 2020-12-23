@@ -1,0 +1,18 @@
+#!/bin/bash
+
+yum update -y
+
+yum install java-1.8.0-openjdk -y
+
+cd /home/ec2-user
+
+wget http://ftp.unicamp.br/pub/apache/kafka/2.4.0/kafka_2.12-2.4.0.tgz
+
+tar -zxvf kafka_2.12-2.4.0.tgz
+
+chown -R ec2-user.ec2-user kafka_2.12-2.4.0
+
+echo -e '\nPATH=$PATH:/home/ec2-user/kafka_2.12-2.4.0/bin' >> /home/ec2-user/.bashrc
+echo -e '\nexport PATH' >> /home/ec2-user/.bashrc
+
+/home/ec2-user/kafka_2.12-2.4.0/bin/kafka-topics.sh --bootstrap-server ${bootstrap_servers} --topic topico1 --replication-factor 1 --partitions 1 --create

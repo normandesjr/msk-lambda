@@ -1,5 +1,5 @@
 resource "aws_security_group" "allow-all" {
-  vpc_id = module.vpc.default_vpc_id
+  vpc_id = module.vpc.vpc_id
   name = "iti-zup-allow-all"
 
   ingress {
